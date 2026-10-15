@@ -1,16 +1,28 @@
-const express=require("express");
-const app=express();
-const dotenv=require("dotenv")
-dotenv.config()
+const express = require("express");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
 
-app.get("/",(req,res) =>
-{
-    res.send("hello from backend")
-}
-);
-const prt1=process.env.PORT 
-const port=2000;
-app.listen(prt1,() =>
-{
-    console.log("le port est" + prt1)
+dotenv.config();
+
+const app = express();
+
+app.get("/", (req, res) => {
+  res.send("hello from backend");
 });
+
+async function connectDB() {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("✅ Connecté à MongoDB Atlas");
+
+    const port = process.env.PORT || 2000;
+    app.listen(port, () => {
+      console.log("🚀 Serveur démarré sur le port " + port);
+    });
+  } catch (error) {
+    console.error("❌ Erreur de connexion MongoDB :", error.message);
+    process.exit(1);
+  }
+}
+
+connectDB();
